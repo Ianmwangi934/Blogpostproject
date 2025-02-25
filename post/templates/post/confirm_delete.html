@@ -1,0 +1,16 @@
+{% extends "post/layout.html" %}
+{% block body %}
+    <script>
+        alert('This will delete the post')
+    </script>
+    <p>{{ post.content }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+        {% for post in post %}
+            {{post}}
+        {% endfor %}
+        <button type="submit">Delete</button>
+        <a href="{% url 'home' %}">Cancel</a>
+    </form>
+{% endblock %}

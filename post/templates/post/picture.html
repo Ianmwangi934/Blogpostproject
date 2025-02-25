@@ -1,0 +1,23 @@
+{% extends  "post/layout.html" %}
+{% load static %}
+{% block body %}
+    <style>
+        .profile_pic{
+            width: 300px;
+            height: 300px;
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /*  Makes the image fits the circle*/
+            border: 2px solid #ccc;/* Adds a border*/
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);/* Optional: Add a shadow for a nice effect */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+    </style>
+    <div class="profile-container">
+        <a href="{% url 'profile_view' profile.user.username %}">
+            <img src="{{ profile.photo.url }}" alt="Profile Picture" width="300" class="profile_pic">  
+            <a href="{% url 'profile_view' profile.user.username %}" class="username">{{ profile.user.username }}</a>  
+        </a>
+
+    </div>
+    
+{% endblock %}

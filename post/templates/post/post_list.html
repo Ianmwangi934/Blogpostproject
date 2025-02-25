@@ -1,0 +1,114 @@
+{% extends "post/layout.html" %}
+
+{% block body %}
+    
+    <style>
+        div {
+            text-align: center;
+            background-color: bisque;
+            margin: 20px;
+        }
+        h1 {
+            color: black;
+            text-align: center;
+            text-decoration: double;
+        }
+        .content{
+            margin: 10px;
+            max-width: 500px;
+            margin-left: 600px;
+            
+        }
+        .username{
+            color: blue;
+        }
+    </style>
+
+    <h1>All Blog Posts</h1>
+    {% for post in post %}
+        <div class="blog-post">
+            <a href="{% url 'profile_view' user.username %}">
+                <h1 class="username" >{{ post.user.username }}</h1>
+            </a>
+            
+            <p class="content">{{ post.content }}</p>
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="Blog Image" width="500px" height="500px">
+                <form action="{% url 'Comment_Section' post.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Add a Comment</button>
+                </form>
+            {% endif %}
+
+            {% if post.video %}
+                <video class="video-post" width="500px" height="500px" controls>
+                    <source src="{{ post.video.url }}" type="video/mp4">
+                    
+                </video>
+                <form action="{% url 'Comment_Section' post.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">Add a Comment</button>
+                </form>
+            {% endif %}
+            <p>Posted by: {{ post.user.username }}</p>
+
+            <p>Posted on {{ post.created_at }}</p>
+
+            <!-- Only show the edit button if the current user is the post's owner-->
+            {% if post.user == request.user %}
+                
+                <a href="{% url 'update_blog_post' post.id %}"><button type="submit">Update your post</button>
+                </a>
+            {% endif %}
+            {% if message %}
+                {{message}}
+            {% endif %}
+
+            <!--Display Comments for the post-->
+            <div class="comment-section">
+                <h4>Comments:</h4>
+                {% for comments in post.comments.all %}
+                    <div class="comment">
+                        <strong>{{ comments.user.username }}: </strong> {{ comments.comments}}
+                        <p><small>Commented on {{ comments.created_at }}</small></p>
+                    </div>
+
+                {% empty %}
+                    <p>No Comments yet.</p>
+                {% endfor %}
+            </div>
+
+            
+        </div>
+    {% endfor %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        console.log("Page loaded , adding event listeners to videos...")
+
+        // Select all videos the class 'video-post'
+        const videos = document.querySelectorAll('.video-post');
+        console.log(`Found ${videos.length} video element`);
+
+        if (videos.length === 0){
+            console.log("No videos found")
+        }
+        // Iterate over the videos and add the 'play' event listener
+        videos.forEach((video)=>{
+            video.addEventListener('play', ()=>{
+                console.log(`Playing video: ${video.src}`);
+                videos.forEach((otherVideo)=>{
+                    if (otherVideo !== video && !otherVideo.paused){
+                        otherVideo.pause();
+                        console.log(`Paused video: ${otherVideo.src}`);
+                    }
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

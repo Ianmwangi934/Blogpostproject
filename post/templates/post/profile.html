@@ -1,0 +1,122 @@
+{% extends "post/layout.html" %}
+{% block body %}
+    <h1>{{profile.user.username}}</h1>
+    <style>
+        .profile-container{
+            display: flex;
+            align-items: center;
+        }
+        .profile_pic{
+            width: 300px;
+            height: 300px;
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /*  Makes the image fits the circle*/
+            border: 2px solid #ccc;/* Adds a border*/
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);/* Optional: Add a shadow for a nice effect */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .profile_pic{
+            transform: scale(1.05); /* slight zoom effecr*/
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);/* Bigger shadow on hoover*/
+        }
+        /*  Add a pointer cursor to indicate it's clickable */
+        a img.profile_pic{
+            cursor: pointer;
+        }
+        .username{
+            font-size: 24px;
+            font-weight: bold;
+        }
+        a.username{
+            color: inherit;
+            text-decoration: bold;
+        }
+        a.username:hover{
+            color: blue;
+            text-decoration: underline;
+        }
+        #div{
+            text-align: center;
+            background-color: bisque;
+            padding: 20px;
+            margin: 20px;
+        }
+        button{
+            color: white;
+            background-color: blue;
+            size: 40px;
+        }
+        
+    </style>
+    {% if profile.background_photo %}
+        <img src="{{ profile.background_photo.url }}" alt="Background Photo" style="width: 100%; height: auto;">
+    {% endif %}
+    <div class="profile-container">
+        {% if profile.photo %}    
+        <img src="{{ profile.photo.url }}" alt="Profile Picture" width="300" class="profile_pic">
+    
+    {% endif %}
+        <a href="{% url 'profile_view' profile.user.username %}" class="username">{{ profile.user.username }}</a>
+
+    </div>
+    
+    <ul>
+        <li><b>First Name:</b>{{profile.first_name}}</li>
+        <li><b>Last name:</b>{{profile.last_name}}</li>
+        <li><b>Bio:</b>{{profile.bio}}</li>
+        <li><b>Lives in:</b>{{profile.location}}</li>
+        <li><b>Date of Birth:</b>{{profile.birth_date}}</li>
+        
+    </ul>
+    <h2>Your Blog Posts</h2>
+    <a href="{% url 'home' %}"><button type="submit">View all post</button></a>
+    {% if posts %}
+        <ul>
+            {% for post in posts %}
+                <li>
+                    
+                    
+                    
+                    <div id="div">
+                        {% if content %}
+                        {{post.content}}
+                        <form action="{% url 'delete_post' post.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        {% endif %}
+
+                        <h3>{{ post.content }}</h3>
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="Post image" width="800px" height="800px">
+                        <form action="{% url 'delete_post' post.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+                    {% if post.video %}
+                        <video src="{{ post.video.url }}" controls width="800px" height="800px"></video>
+                        <form action="{% url 'delete_post' post.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+
+                    </div>
+                    
+            {% endfor %}
+            
+                </li>
+        </ul>
+    {% else %}
+        <p>You haven't posted anything yet</p>
+    {% endif %}
+    <a href="{% url 'create_blog_post' %}">
+        <button type="submit">Post</button>
+    </a>
+    
+    
+    
+    
+    
+    
+{% endblock %}
